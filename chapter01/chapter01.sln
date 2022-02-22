@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.32126.315
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cpC", "cpC\cpC.vcxproj", "{B481C625-EE89-4E44-A5B2-CB80E919165B}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cpW", "cpW\cpW.vcxproj", "{29B8CD8E-DED7-4AC3-92C4-6F7266678B1D}"
@@ -8,8 +10,6 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cpCF", "cpCF\cpCF.vcxproj", "{FDC2845F-A99A-4E1E-9D83-C9DD690A61FD}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cpwFA", "cpwFA\cpwFA.vcxproj", "{9EADAAD3-7519-45E7-9D07-C09D5250691F}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test", "test\test.vcxproj", "{D45AB43D-8C35-4DD8-97BD-4EAFD46F0D88}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,14 +47,11 @@ Global
 		{9EADAAD3-7519-45E7-9D07-C09D5250691F}.Release|Win32.ActiveCfg = Release|Win32
 		{9EADAAD3-7519-45E7-9D07-C09D5250691F}.Release|Win32.Build.0 = Release|Win32
 		{9EADAAD3-7519-45E7-9D07-C09D5250691F}.Release|x64.ActiveCfg = Release|Win32
-		{D45AB43D-8C35-4DD8-97BD-4EAFD46F0D88}.Debug|Win32.ActiveCfg = Debug|Win32
-		{D45AB43D-8C35-4DD8-97BD-4EAFD46F0D88}.Debug|Win32.Build.0 = Debug|Win32
-		{D45AB43D-8C35-4DD8-97BD-4EAFD46F0D88}.Debug|x64.ActiveCfg = Debug|Win32
-		{D45AB43D-8C35-4DD8-97BD-4EAFD46F0D88}.Release|Win32.ActiveCfg = Release|Win32
-		{D45AB43D-8C35-4DD8-97BD-4EAFD46F0D88}.Release|Win32.Build.0 = Release|Win32
-		{D45AB43D-8C35-4DD8-97BD-4EAFD46F0D88}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F9C807FA-AEEF-4F05-9647-828E1E2BCF3A}
 	EndGlobalSection
 EndGlobal
