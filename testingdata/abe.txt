@@ -1,0 +1,2 @@
+Retrieves the path of the system directory.
+A pointer to the buffer to receive the path.
