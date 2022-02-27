@@ -32,6 +32,10 @@ bld/
 [Oo]ut/
 [Ll]og/
 [Ll]ogs/
+#Test projects;  added by me
+testing/
+test/
+Lab01/
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
