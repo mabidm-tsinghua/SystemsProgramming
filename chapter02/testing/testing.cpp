@@ -13,10 +13,9 @@ VOID ReportError (LPCTSTR userMessage, DWORD exitCode, BOOL printErrorMessage);
 int _tmain (int argc, LPCTSTR *argv)
 {   
 	
-	OVERLAPPED ov={0} , ovZero = {0, 0, 0, 0, NULL};
-	int a[6] = {1};
+	char i = -1 % 256;
 	
-	printf("%p %u %u\n", ov.Pointer,ov.Offset,ov.OffsetHigh);
+	printf("%hhu \n", i);
 	
 	
   return 0;

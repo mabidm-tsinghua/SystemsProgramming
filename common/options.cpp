@@ -28,7 +28,7 @@ DWORD Options (int argc, LPCTSTR *argv, LPCTSTR OptStr, ...)
 		*pFlag = FALSE;
 		for (iArg = 1; !(*pFlag) && iArg < argc && argv [iArg] [0] == _T('-'); iArg++)
 			*pFlag = _memtchr (argv [iArg], OptStr [iFlag],
-					_tcslen (argv [iArg])) != NULL; // _memtchr returns a pointer
+					_tcslen (argv [iArg])) != NULL; // Locate character in block of memory
 		iFlag++;
 	}
 

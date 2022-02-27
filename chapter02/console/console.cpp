@@ -26,7 +26,7 @@ int _tmain(int argc, LPCTSTR argv[])
 
 									  
 
-BOOL PrintStrings (HANDLE hOut, ...)
+BOOL PrintStrings (HANDLE hOut, ...) //use it to print variable number of strings
 
 /* Write the messages to the output handle. Frequently hOut
 	will be standard out or error, but this is not required.

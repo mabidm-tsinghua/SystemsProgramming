@@ -29,7 +29,7 @@ int _tmain (int argc, LPCTSTR argv [])
 
 	/*	dashS will be TRUE only if "-s" is on the command line. */
 	/*	iFirstFile is the argv [] index of the first input file. */
-	iFirstFile = Options (argc, argv, _T("s"), &dashS, NULL);
+	iFirstFile = Options (argc, argv, _T("s"), &dashS, NULL);//"sop"
 
 	if (iFirstFile == argc) { /* No files in arg list. */
 		CatFile (hStdIn, hStdOut);//read from standard input and output on standard output

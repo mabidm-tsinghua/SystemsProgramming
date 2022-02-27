@@ -23,7 +23,7 @@ int _tmain (int argc, LPTSTR argv [])
 	if (argc != 4)
 		ReportError  (_T ("Usage: cci shift file1 file2"), 1, FALSE);
 	
-	if (!cci_f (argv [2], argv [3], _ttoi(argv[1])))
+	if (!cci_f (argv [2], argv [3], _ttoi(argv[1]))) //atoi
 		ReportError (_T ("Encryption failed."), 4, TRUE);
 
 	return 0;
@@ -62,7 +62,7 @@ BOOL cci_f (LPCTSTR fIn, LPCTSTR fOut, DWORD shift)
 		   useful as the compare different implementations and different platforms. */
 		for (iCopy = 0; iCopy < nIn; iCopy++){
 			
-			buffer[iCopy] = (buffer[iCopy] + bShift) % 256;
+			buffer[iCopy] = (buffer[iCopy] + bShift) % 256; //to decrypt change + to -
 		}
 		writeOK = WriteFile (hOut, buffer, nIn, &nOut, NULL);
 	}
