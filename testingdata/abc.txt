@@ -1,2 +1,6 @@
-Retrieves the path of the system directory.
-A pointer to the buffer to receive the path .
+sds
+End of Program
+My name is Muhammad Abid
+End of Program
+dssds
+End of Program

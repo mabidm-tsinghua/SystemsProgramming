@@ -50,6 +50,7 @@ int _tmain (int argc, LPCTSTR argv [])
 			CloseHandle (hInFile);
 		}
 	}
+	//getchar();
 	return 0;
 }
 
