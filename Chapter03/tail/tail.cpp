@@ -68,10 +68,10 @@ int _tmain (int argc, LPTSTR argv [])
 	while (TRUE) {
 		while (ReadFile (hInFile, &c, sizeof(TCHAR), &nRead, NULL)
 				&& nRead > 0 && c != CR) ; /* Empty loop body */
-		if (nRead < sizeof(TCHAR)) break; //make sure ReadFile returns coz CR found , not coz of error or EOF did not fail
+		if (nRead < sizeof(TCHAR)) break; //EOF reached so no char read or other reason
 					/* Found a CR. Is LF next? */
 		ReadFile (hInFile, &c, sizeof(TCHAR), &nRead, NULL);
-		if (nRead < sizeof(TCHAR)) break;//make sure ReadFile did not fail or EOF reached
+		if (nRead < sizeof(TCHAR)) break;////EOF reached so no char read or other reason
 		if (c != LF) continue;// CR was not part of CRLF
 		CurPtr.QuadPart = 0;
 		/* Get the current file position. */
@@ -80,11 +80,11 @@ int _tmain (int argc, LPTSTR argv [])
 				/* Retain the start-of-line position */
 		LinePos[LastLine].QuadPart = CurPtr.QuadPart;//pointer to first character of each line
 		LineCount++;
-		LastLine = LineCount % NUM_LINES;// 1 to 10
+		LastLine = LineCount % NUM_LINES;// 0 to 10
 	}
-	
-	FirstLine = LastLine % NUM_LINES;
-	if (LineCount < NUM_LINES) FirstLine = 0;
+	//FirstLine w.r.t to start of a file
+	FirstLine = LastLine % NUM_LINES;// LastLine is the val after last write to LinePos
+	if (LineCount < NUM_LINES) FirstLine = 0;//number of lines are <=10
 	CurPtr.QuadPart = LinePos[FirstLine].QuadPart;
 
 	/* The start of each line is now stored in LinePos []
