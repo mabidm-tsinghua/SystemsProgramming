@@ -61,7 +61,7 @@ int _tmain(int argc, LPCTSTR argv[])
 	//argc == fileIndex
 	if (argc < fileIndex + 1) //if search pattern not specified; just this command: lsw -R -l or lsw -l
 		ok = TraverseDirectory(currPath, _T("*"), MAX_OPTIONS, flags);
-	else for (i = fileIndex; i < argc; i++) {
+	else for (i = fileIndex; i < argc; i++) { //for each search pattern
 		if (_tcslen(argv[i]) >= MAX_PATH) {
 			ReportError(_T("The command line argument is longer than the maximum this program supports"), 2, FALSE);
 		}
@@ -70,16 +70,17 @@ int _tmain(int argc, LPCTSTR argv[])
 
 		/* Find the rightmost backslash, if any.
 			Set the path and use the rest as the search pattern. */
+
 		pSlash = _tstrrchr(parentPath, _T('\\')); //return pointer to right most backslash
-		//extract parent path and search pattern name
+		//extract parent path and search pattern name. parent path becomes current directory
 		if (pSlash != NULL) {
-			*pSlash = _T('\0');
+			*pSlash = _T('\0'); 
 			_tcscat(parentPath, _T("\\"));    //required by SetCurrentDirectory     
 			SetCurrentDirectory(parentPath);
 			pSlash = _tstrrchr(searchPattern, _T('\\'));  
 			pSearchPattern = pSlash + 1;
-		} else { //no right most slash in the path
-			_tcscpy(parentPath, _T(".\\"));
+		} else { //no right most slash in the path; 
+			_tcscpy(parentPath, _T(".\\"));//current directory
 			pSearchPattern = searchPattern;
 		}
 		ok = TraverseDirectory(parentPath, pSearchPattern, MAX_OPTIONS, flags) && ok;
@@ -100,7 +101,7 @@ static BOOL TraverseDirectory(LPTSTR parentPath, LPTSTR searchPattern, DWORD num
 	WIN32_FIND_DATA findData;
 	BOOL recursive = flags[0];
 	DWORD fType, iPass, lenParentPath;
-	TCHAR subdirectoryPath[MAX_PATH + 1];
+	TCHAR subdirectoryPath[MAX_PATH_LONG + 1];
 
 	/* Open up the directory search handle and get the
 		first file name to satisfy the path name.
@@ -112,6 +113,7 @@ static BOOL TraverseDirectory(LPTSTR parentPath, LPTSTR searchPattern, DWORD num
 		_tcscat(searchPattern, _T("*"));
 	}
 	/* Add a backslash, if needed, at the end of the parent path */
+	//this is true if parentPath is the path returned by GetCurrentDirectory()
 	if (parentPath[_tcslen(parentPath)-1] != _T('\\') ) { /* Adds \ to the end of the parent path, unless there already is one */
 		_tcscat (parentPath, _T("\\"));
 	}
@@ -131,7 +133,7 @@ static BOOL TraverseDirectory(LPTSTR parentPath, LPTSTR searchPattern, DWORD num
 		/* Scan the directory and its subdirectories for files satisfying the pattern. */
 		do {
 
-		/* For each file located, get the type. List everything on pass 1.
+		/* For each file/directory located, get the type. List everything on pass 1.
 			On pass 2, display the directory name and recursively process
 			the subdirectory contents, if the recursive option is set. */
 			fType = FileType(&findData);
@@ -148,7 +150,7 @@ static BOOL TraverseDirectory(LPTSTR parentPath, LPTSTR searchPattern, DWORD num
 				}
 				_tcscpy(subdirectoryPath, parentPath);
 				_tcscat (subdirectoryPath, findData.cFileName); /* The parent path terminates with \ before the _tcscat call */
-				TraverseDirectory(subdirectoryPath, _T("*"), numFlags, flags);
+				TraverseDirectory(subdirectoryPath, _T("*"), numFlags, flags);//include all files/directories in a sub-dir
 				SetCurrentDirectory(_T("..")); /* Restore the current directory */
 			}//directory
 
@@ -200,7 +202,10 @@ static BOOL ProcessItem(LPWIN32_FIND_DATA pFileData, DWORD numFlags, LPBOOL flag
 	if (longList) {//option -l found 
 		_tprintf(_T("%c"), fileTypeChar[fType - 1]);
 		_tprintf(_T("%20llu"), ((LONGLONG)pFileData->nFileSizeHigh * (MAXDWORD+1))+pFileData->nFileSizeLow);
-		FileTimeToSystemTime(&(pFileData->ftLastWriteTime), &lastWrite);//FileTimeToLocalFileTime()
+		//Use these two functions to convert FileTime to local time
+		// FileTimeToLocalFileTime();
+		//FileTimeToSystemTime()
+		FileTimeToSystemTime(&(pFileData->ftLastWriteTime), &lastWrite);//SystemTime struct for printing
 		_tprintf(_T("	%02d/%02d/%04d %02d:%02d:%02d"),
 				lastWrite.wDay, lastWrite.wMonth, 
 				lastWrite.wYear, lastWrite.wHour,

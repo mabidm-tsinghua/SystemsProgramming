@@ -20,11 +20,15 @@ Mode: 1 - Get a share lock and hold it until prompted to release it
 	file to use in the test; assume its name is "lock.txt"
 	For example, in conosle 1 execute:
 		TestLock lock.txt 1
-	to create a share lock. In the console 2 try in succession:
+	to create a share lock. 
+	In the console 2 try in succession:
 		TestLock lock.txt 2     You can not create an exclusive lock over a share lock
 		TestLock lock.txt 1     You can create a second share lock
 		TestLock lock.txt 4     You can not write over a share lock
 		TestLock lock.txt 3     You can read over a share lock even without a lock.
+    Points:
+	     -Shared and exclusive lock cannot overlap lock region
+		 -We can have shared and exclusive lock in the same file but for different regions
 */
 
 #include "stdafx.h"
@@ -33,7 +37,7 @@ int _tmain (int argc, LPTSTR argv[])
 
 {
 	HANDLE fh;
-	TCHAR String[] = _T("Hello, world."), Buffer[] = _T("12345678"), c;
+	TCHAR String[50] = _T("Hello, world."), Buffer[50] = _T("12345678"), c;
 	int command;
 	OVERLAPPED ov = {0, 0, 0, 0, NULL};
 	DWORD nRead = 0, nWrite = 0;
@@ -43,7 +47,7 @@ int _tmain (int argc, LPTSTR argv[])
 
 	if (argc < 3) ReportError (_T("Require file name and command"), 1, FALSE);
 
-	command = _ttoi(argv[2]); //10  
+	command = _ttoi(argv[2]);   
 
 	fh = CreateFile (argv[1], GENERIC_READ | GENERIC_WRITE, 
 		FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING,
@@ -53,10 +57,12 @@ int _tmain (int argc, LPTSTR argv[])
 
 	switch (command) {
 		case 1:	/* Get a share lock and hold until prompted to release */
-				if (!LockFileEx (fh, LOCKFILE_FAIL_IMMEDIATELY, 
+			//LOCKFILE_FAIL_IMMEDIATELY DETERMINE WHETHER LockFileEx OPERAATES synchronously or asynchronously
+			//ov contains the file offset of the beginning of the lock range
+				if (!LockFileEx (fh, LOCKFILE_FAIL_IMMEDIATELY, //LOCKFILE_EXCLUSIVE_LOCK NOT SPECIFIED SO SHARED LOCK
 					0, 32, 0, &ov)) //locking first 32 bytes
 					ReportError (_T("Share Lock Failed"), 3, TRUE);
-				_tprintf (_T("\nType any character to release the share lock"));
+				_tprintf (_T("\nType any character to release the shared lock"));
 				_tscanf (_T("%c"), &c);
 				if (!UnlockFileEx (fh, 0, 32, 0, &ov)) //
 					ReportError (_T("Share Unlock Failed"), 3, TRUE);
@@ -65,6 +71,9 @@ int _tmain (int argc, LPTSTR argv[])
 				break;
 		
 		case 2:	/* Get an exclusive lock and hold until prompted to release */
+			/*ov.Offset = 30;
+			  ov.OffsetHigh = 0;*/
+			
 				if (!LockFileEx (fh, LOCKFILE_EXCLUSIVE_LOCK | LOCKFILE_FAIL_IMMEDIATELY,
 					0, 32, 0, &ov))
 					ReportError (_T("Exclusive Lock Failed"), 3, TRUE);
@@ -77,9 +86,12 @@ int _tmain (int argc, LPTSTR argv[])
 				break;
 
 		case 3:	/* Read a record */
-				if (!ReadFile (fh, Buffer, sizeof(Buffer), &nRead, NULL))
-					ReportError (_T("File Read failed"), 0, TRUE);
-				else _tprintf (_T("\nRead succeeded: %c %c"), Buffer[0], Buffer[1]);
+			if (!ReadFile(fh, Buffer, sizeof(Buffer), &nRead, NULL))
+				ReportError(_T("File Read failed"), 0, TRUE);
+			else{ 
+				Buffer[50 - 1] = _T('\0');
+				_tprintf(_T("\nRead succeeded: %s"), Buffer+1);//+1 to skip unicode signature
+				}
 				break;
 
 		case 4: /* Write a record */
