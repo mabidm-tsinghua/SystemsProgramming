@@ -32,6 +32,8 @@
 
 #include "stdafx.h"
 
+
+
 BOOL TraverseDirectory(LPTSTR, LPTSTR, DWORD, LPBOOL);
 DWORD FileType(LPWIN32_FIND_DATA);
 BOOL ProcessItem(LPWIN32_FIND_DATA, DWORD, LPBOOL);

@@ -35,7 +35,7 @@ int _tmain (int argc, LPTSTR argv[])
 		return 1;
 	}
 	FileIndex = Options(argc, (LPCTSTR*) argv, _T ("amc"),
-			&setAccessTime, &setModTime, &notCreateNew, NULL);
+			&setAccessTime, &setModTime, &notCreateNew, NULL); //touch -m -c f1 f2 ...
 
 	CreateFlag = notCreateNew ? OPEN_EXISTING : OPEN_ALWAYS;
 

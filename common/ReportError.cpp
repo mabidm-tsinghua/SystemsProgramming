@@ -45,10 +45,16 @@ VOID ReportException (LPCTSTR userMessage, DWORD exceptionCode)
 	Print the system error message only if the message is non-null. */
 {	
 	if (lstrlen (userMessage) > 0)
-		ReportError (userMessage, 0, TRUE);
+		ReportError (userMessage, 0, TRUE); //don't terminate the entire process; may be nonfatal error
 			/* If fatal, raise an exception. */
-
-	if (exceptionCode != 0) 
+	/*bits 27....0 for error code.
+	  bit 28 is always 0
+	  bit 29 is 1 for user exception and 0 for microsoft
+	  bits 31 30 encode severity: 0 for success, 
+	                               1 for informational
+								   2 for Warning
+								   3 for error*/
+	if (exceptionCode != 0) //generate exception
 		RaiseException (
 			(0x0FFFFFFF & exceptionCode) | 0xE0000000, 0, 0, NULL);//E for error
 	

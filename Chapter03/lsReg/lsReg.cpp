@@ -4,12 +4,15 @@
 
 
 /* Chapter 3. lsREG - Registry list command. */
-/* lsREG[options] SubKey    //Predefined key in the subkey is case-sensitive because we are doing string comparison.
+/* lsREG [options] SubKey    //Subkey starts with predefined key name.
 	List the key-value pairs.
 	Options:
 		-R	recursive
 		-l  List extended information; namely, the last write time
-			and the value type					*/
+			and the value type		
+lsReg.exe -l HKEY_CURRENT_USER\dcis\systemprogramming\abc
+
+			*/
 
 
 /* This program illustrates:
@@ -41,6 +44,7 @@ int _tmain(int argc, LPTSTR argv[])
 	
 
 	/* Tables of predefined key names and keys */
+	//standard parent keys
 	LPTSTR PreDefKeyNames[] = {
 		_T("HKEY_LOCAL_MACHINE"),
 		_T("HKEY_CLASSES_ROOT"),
@@ -75,13 +79,18 @@ int _tmain(int argc, LPTSTR argv[])
 		The key and subkey names will be copied from argv[keyIndex]. */
 
 	/*  Build the Key */
-	pScan = argv[keyIndex];
+	pScan = argv[keyIndex];   // i < MAX_PATH verify??? 
 	for (i = 0; *pScan != _T('\\') && *pScan != _T('\0') && i < MAX_PATH; pScan++, i++)
 		keyName[i] = *pScan; //copy string
 	
 	keyName[i] = _T('\0'); //terminate string
 	if (*pScan == _T('\\')) pScan++;
+	
+	//make predefined keyname upper case
+	for (int c = 0;c< _tcslen(keyName);c++ ){
+		keyName[c] = _totupper(keyName[c]);
 
+	}
 	/* Translate predefined key name to an HKEY */
 	for (	i = 0;
 			PreDefKeyNames[i] != NULL && _tcscmp(PreDefKeyNames[i], keyName) != 0; //0 means equal
@@ -92,10 +101,12 @@ int _tmain(int argc, LPTSTR argv[])
 	/*  pScan points to the start of the subkey string. It is not directly
 		documented that \ is the separator, but it works fine */
 	//hKey is the parent key handle
-	if (RegOpenKeyEx(hKey, pScan, 0, KEY_READ, &hNextKey) != ERROR_SUCCESS) //open the specified pScan key; pScan is not case-sensitive
+	//open the specified pScan key; pScan is not case-sensitive
+	//KEY_READ is the desired access rights to the key to be opened.
+	if (RegOpenKeyEx(hKey, pScan, 0, KEY_READ, &hNextKey) != ERROR_SUCCESS) 
 		ReportError(_T("Cannot open subkey properly"), 2, TRUE);
 
-	hKey = hNextKey;//pointer to predefined (i.e.hKey) or subkey (specified by pScan) depending on whether subkey is NULL or empty string
+	hKey = hNextKey;//pointer to predefined (i.e.hKey) or subkey (specified by pScan) depending on whether pScan is NULL or empty string
 
 	ok = TraverseRegistry(hKey, argv[keyIndex], NULL, flags);
 	RegCloseKey(hKey);
@@ -129,17 +140,22 @@ BOOL TraverseRegistry(HKEY hKey, LPTSTR fullKeyName, LPTSTR subKey, LPBOOL flags
 	 *    SUGGESTION: See lsW (Chapter 3) for a better implementation and fix this program accordingly.
 	 */
 
-	TCHAR fullSubKeyName[MAX_PATH+1];
+	TCHAR fullSubKeyName[1024] = _T("");;
 
 	/* Open up the key handle. */
-
-	if (RegOpenKeyEx(hKey, subKey, 0, KEY_READ, &hSubKey) != ERROR_SUCCESS)//when subkey is NULL hkey and hSubKey are same pointers
+	//when subkey is NULL or empty string then hSubKey = hkey
+	/*KEY_READ is the access right. The function fails if the security descriptor of the 
+	key does not permit the requested access for the calling process. */
+	/*KEY_READ Combines the STANDARD_RIGHTS_READ, KEY_QUERY_VALUE, 
+	KEY_ENUMERATE_SUB_KEYS, and KEY_NOTIFY values.*/
+	if (RegOpenKeyEx(hKey, subKey, 0, KEY_READ, &hSubKey) != ERROR_SUCCESS) //ERROR_SUCCESS = 0
 		ReportError(_T("\nCannot open subkey"), 2, TRUE);
 
-	/*  Find max size info regarding the key and allocate storage */
+	/*  Retrieves information about the specified registry key */
+	//
 	if (RegQueryInfoKey(hSubKey, NULL, NULL, NULL,   // infor abt each key
-		&numSubKeys, &maxSubKeyLen, NULL, 
-		&numValues, &maxValueNameLen, &maxValueLen, 
+		&numSubKeys, &maxSubKeyLen, NULL, //maxSubKeyLen is char count not including \0
+		&numValues, &maxValueNameLen, &maxValueLen, //maxValueLen in bytes
 		NULL, &lastWriteTime) != ERROR_SUCCESS)
 			ReportError(_T("Cannot query subkey information"), 3, TRUE);
 	subKeyName = (LPTSTR)malloc(TSIZE * (maxSubKeyLen+1));   /* +1 for null character */
@@ -158,7 +174,7 @@ BOOL TraverseRegistry(HKEY hKey, LPTSTR fullKeyName, LPTSTR subKey, LPBOOL flags
 		
 		//enumerates values for the specified key
 		result = RegEnumValue(hSubKey, index, 
-			valueName, &valueNameLen, //name buffer and its length in characters
+			valueName, &valueNameLen, //value name buffer and its length in characters
 			NULL,  &valueType,
 			value, &valueLen);//value buffer and its length in bytes
 
@@ -224,15 +240,15 @@ BOOL DisplayPair(LPTSTR valueName, DWORD valueType,
 	case REG_MULTI_SZ: /* 7: An array of null-terminated strings, terminated by two null characters. E.g. string01\0string02\0..\0\0 */
 		_tprintf(_T("Begin Multiple String:\n"));
 		while(*pV){
-		 _tprintf(_T("\t\t%s"), (LPTSTR)*pV); 
-		 pV = pV + _tcslen((LPTSTR)pV) + 1;
+		 _tprintf(_T("\t\t%s"), (LPTSTR)pV); 
+		 pV = pV + _tcslen((LPTSTR)pV) + 1;//+1 for null char
 		
 		}
         _tprintf(_T("End Multiple String:\n"));				
 		break;
 	case REG_DWORD_BIG_ENDIAN: /* 5:  A 32-bit number in big-endian format. */ 
-		for (i = valueLen - 1; i >= 0  ; i--)
-			_tprintf(_T(" %x"), *(pV+i));
+		for (i = valueLen - 1; i >= 0  ; i--) //MSB ...LSB
+			_tprintf(_T(" %x"), pV[i]);//*(pV+i)
 		break;
 	case REG_LINK: /* 6: A Unicode symbolic link. */
 		_tprintf(_T("%s"), (LPTSTR)value); 

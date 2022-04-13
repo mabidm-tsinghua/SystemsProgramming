@@ -61,12 +61,12 @@ int _tmain (int argc, LPTSTR argv[])
 			//ov contains the file offset of the beginning of the lock range
 				if (!LockFileEx (fh, LOCKFILE_FAIL_IMMEDIATELY, //LOCKFILE_EXCLUSIVE_LOCK NOT SPECIFIED SO SHARED LOCK
 					0, 32, 0, &ov)) //locking first 32 bytes
-					ReportError (_T("Share Lock Failed"), 3, TRUE);
+					ReportError (_T("Shared Lock Failed"), 3, TRUE);
 				_tprintf (_T("\nType any character to release the shared lock"));
 				_tscanf (_T("%c"), &c);
 				if (!UnlockFileEx (fh, 0, 32, 0, &ov)) //
 					ReportError (_T("Share Unlock Failed"), 3, TRUE);
-				_tprintf (_T("\nLock released"));
+				_tprintf (_T("\nShared Lock released"));
 
 				break;
 		

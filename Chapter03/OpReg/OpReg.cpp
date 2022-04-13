@@ -4,11 +4,11 @@
 
 
 
-/* OpREG [options] SubKey    //Predefined key in the subkey is case-sensitive because we are doing string comparison.
+/* OpREG [options] SubKey   //Subkey starts with predefined key name
 	
 	Options:
 		-a	to create a new subkey
-		-d  to delete a subkey
+		-d  to delete a subkey (first we have to delete nested subkeys of a key then delete a key)
 		-v  to add values for subkey
 			*/
 
@@ -75,6 +75,12 @@ int _tmain(int argc, LPTSTR argv[])
 	keyName[i] = _T('\0'); //terminate string
 	if (*pScan == _T('\\')) pScan++;
 
+	//make predefined keyname upper case
+	for (int c = 0; c < _tcslen(keyName); c++) {
+		keyName[c] = _totupper(keyName[c]);
+
+	}
+
 	/* Translate predefined key name to an HKEY */
 	for (	i = 0;
 			PreDefKeyNames[i] != NULL && _tcscmp(PreDefKeyNames[i], keyName) != 0; //0 means equal
@@ -83,6 +89,11 @@ int _tmain(int argc, LPTSTR argv[])
 	hKey = PreDefKeys[i]; //Predefine key handle.
 
 	if(addFlag){
+		/*REG_OPTION_NON_VOLATILE: This key is not volatile; this is the default.
+		The informationis stored in a file and is preserved when the system is restarted.
+		*/
+		/*KEY_ALL_ACCESS: specifies the access rights for the key to be created
+		*/
 		if (RegCreateKeyEx(hKey,pScan,0,NULL,REG_OPTION_NON_VOLATILE,KEY_ALL_ACCESS ,NULL,&hSubKey,&dwDisposition)!= ERROR_SUCCESS) //
 		   ReportError(_T("Cannot create subkey"), 2, TRUE);
 

@@ -1,61 +1,71 @@
-// testing.cpp : Defines the entry point for the console application.
-//
+/* Chapter 3. tail command. */
+/* tail file - Print the last 10 lines of the named file.
+	All options are ignored. The file must be specified. */
 
+	/* This program illustrates:
+		1. Getting the file size.
+		2. Setting the file pointer.
+		3. LARGE_INTEGER arithmetic and using the 64-bit file positions.
+		4. Getting the current file position by moving
+			0 bytes from the current position. */
+
+			/*  UPDATES. APRIL 12, 2010.
+			 *  1. The program uses GetFileSizeEx and SetFilePointerEx, which are much easier to use than the non-Ex versions and
+				   are supported in all the target Windows systems.
+			 *  2. There are some corrections, suggested by Kwan Ting Chan (KTC) to account for the line size and UNICODE usage.
+			 *
+			 *  LIMITATIONS: Lines shouldn't be longer than 256 characters
+			 *  .
+			 */
 #include "stdafx.h"
-#include <stdarg.h>     /* va_list, va_start, va_arg, va_end */
-
-VOID ReportError (LPCTSTR userMessage, DWORD exitCode, BOOL printErrorMessage);
 
 
+#define NUM_LINES 11 /* One more than number of lines in the tail. */
 
-#include <stdlib.h>
+#define MAX_LINE_SIZE 256
+#define MAX_CHAR NUM_LINES*(MAX_LINE_SIZE+1)
 
-int _tmain (int argc, LPCTSTR *argv)
-{   
-	
-	char i = -1 % 256;
-	
-	printf("%hhu \n", i);
-	
-	
-  return 0;
-}
-
-
-
-VOID ReportError (LPCTSTR userMessage, DWORD exitCode, BOOL printErrorMessage)
-
-/* General-purpose function for reporting system errors.
-	Obtain the error number and convert it to the system error message.
-	Display this information and the user-specified message to the standard error device.
-	userMessage:		Message to be displayed to standard error device.
-	exitCode:		0 - Return.
-					> 0 - ExitProcess with this code.
-	printErrorMessage:	Display the last system error message if this flag is set. */
+int _tmain(int argc, LPTSTR argv[])
 {
-	DWORD eMsgLen, errNum = GetLastError ();
-	LPTSTR lpvSysMsg=NULL;
-	_ftprintf (stderr, _T("%s\n"), userMessage);
-	int a=12;
-	
-	if (printErrorMessage) {
-		eMsgLen = FormatMessage (FORMAT_MESSAGE_FROM_STRING|FORMAT_MESSAGE_ALLOCATE_BUFFER,
-				_T(" Cannot NULL %1!d!"), errNum, MAKELANGID (LANG_NEUTRAL, SUBLANG_DEFAULT),
-				(LPTSTR)&lpvSysMsg, 0, (va_list*)&a);
-		if (eMsgLen > 0)
-		{
-			_ftprintf (stderr, _T("%s\n"), lpvSysMsg);
-		}
-		else
-		{
-			_ftprintf (stderr, _T("Last Error Number; %d.\n"), errNum);
-		}
+	HANDLE hInFile;
+	HANDLE hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
+	LARGE_INTEGER FileSize, CurPtr, FPos;
+	LARGE_INTEGER LinePos[NUM_LINES];
+	DWORD LastLine, FirstLine, LineCount, nRead;
+	TCHAR buffer[MAX_CHAR + 1], c;
+	TCHAR b[1024] = TEXT("This is Systems Programming Class.................");
 
-		if (lpvSysMsg != NULL) LocalFree (lpvSysMsg); /* Explained in Chapter 5. */
+	if (argc != 2)
+		ReportError(_T("Usage: tail file"), 1, FALSE);
+	hInFile = CreateFile(argv[1], GENERIC_READ,
+		0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+	if (hInFile) {
+		_tprintf(TEXT("%u \n"),GetLastError() );
+		ReportError(_T("tail error: Cannot openfile."), 2, TRUE);
 	}
 
-	if (exitCode > 0)
-		ExitProcess (exitCode);
+	/* Get the current file size in bytes. */
+	if (!GetFileSizeEx(hInFile, &FileSize))
+		ReportError(_T("tail error: file size"), 3, TRUE);
 
-	return;
+	/* Set the file pointer on the assumption that 256
+		is the maximum size and look for the line beginnings.
+		If 10 lines are not located, then just put out the
+		ones that are found. A more general solution would look
+		farther back in the file if necessary. Alternatively,
+		start the scan at the beginning of the file, but that
+		would be time consuming for a large file. */
+
+	CurPtr.QuadPart = (LONGLONG)FileSize.QuadPart
+		- NUM_LINES * MAX_LINE_SIZE * sizeof(TCHAR);
+	if (CurPtr.QuadPart < 0) CurPtr.QuadPart = 2; //possible if file is small 
+	if (!SetFilePointerEx(hInFile, CurPtr, &FPos, FILE_END))
+		ReportError(_T("tail Error: Set Pointer."), 4, TRUE);
+	_tprintf(TEXT("%llx"),FPos.QuadPart);
+	FPos.QuadPart = -0x1c;
+	if (!SetFilePointerEx(hInFile, FPos, &CurPtr, FILE_CURRENT))
+		ReportError(_T("tail Error: Set Pointer."), 4, TRUE);
+	_tprintf(TEXT("\n%llx"), CurPtr.QuadPart);
+	CloseHandle(hInFile);
+	return 0;
 }
