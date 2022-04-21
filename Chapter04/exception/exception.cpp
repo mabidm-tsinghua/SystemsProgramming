@@ -33,7 +33,7 @@ int _tmain (int argc, LPTSTR argv [])
 			default: done = TRUE;
 			}
 		} /* End of inner __try. */
-
+		  //GetExceptionInformation() can becalled only from within the filter expression of an exception handler.
 		__except (Filter (GetExceptionInformation (), &eCategory)){
 			
 			switch (eCategory) {
@@ -80,8 +80,10 @@ static DWORD Filter (LPEXCEPTION_POINTERS pExP, LPDWORD eCategory)
 		case EXCEPTION_ACCESS_VIOLATION:
 				/* Determine whether it was a read, write, or execute
 					and give the virtual address. */
+			//0 means read, 1 means write, 8 means user-mode dataexecution prevention (DEP) violation.
 			readWrite =
 				(DWORD)(pExP->ExceptionRecord->ExceptionInformation [0]);
+			//virtual address that caused the exception
 			virtAddr =
 				(DWORD)(pExP->ExceptionRecord->ExceptionInformation [1]);
 			_tprintf
