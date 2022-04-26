@@ -31,7 +31,7 @@ int _tmain(int argc, LPTSTR argv[])
 	TCHAR outFileName[MAX_PATH] = _T(""), * pBuffer = NULL;
 	OVERLAPPED ov = { 0, 0, 0, 0, NULL };
 	LARGE_INTEGER fSize;
-	//SetUnhandledExceptionFilter(Filter);
+	SetUnhandledExceptionFilter(Filter);
 	
 
 	if (argc <= 1)

@@ -33,7 +33,7 @@ int _tmain (int argc, LPTSTR argv [])
 			default: done = TRUE;
 			}
 		} /* End of inner __try. */
-		  //GetExceptionInformation() can becalled only from within the filter expression of an exception handler.
+		  //GetExceptionInformation() can be called only from within the filter expression of an exception handler.
 		__except (Filter (GetExceptionInformation (), &eCategory)){
 			
 			switch (eCategory) {

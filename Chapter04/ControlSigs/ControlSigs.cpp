@@ -1,6 +1,8 @@
 /* Chapter 4. CNTRLC.C */
 /* Catch Cntrl-C signals. */
 
+
+
 /*Each console process has its own list of application-defined
 HandlerRoutine functions thathandle CTRL+C and CTRL+BREAK signals.
 These last handler added by SetConsoleCtrlHandler() called first.
@@ -48,7 +50,7 @@ int _tmain(int argc, LPTSTR argv[])
 		 //process receives ctrl-c
 		if (!SetConsoleCtrlHandler(NULL, FALSE))
 		ReportError(_T("Error setting event handler"), 1, TRUE);
-		
+		_tprintf(_T("Inside\n"));
 	
 	}
 	_tprintf(_T("Stopping the main program as requested.\n"));

@@ -30,7 +30,7 @@ int _tmain (int argc, LPTSTR argv [])
 	TCHAR outFileName[MAX_PATH] = _T(""), *pBuffer = NULL;
 	OVERLAPPED ov = { 0, 0, 0, 0, NULL};
 	LARGE_INTEGER fSize;
-
+	getchar();
 	
 	if (argc <= 1)
 		ReportError (_T ("Usage: toupper.exe file1 [file2 file3 ...]"), 1, FALSE);
