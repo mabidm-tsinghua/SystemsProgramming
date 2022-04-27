@@ -34,9 +34,9 @@ typedef struct _OSVERSIONINFO{
 /* For reference -- Here is the SYSTEM_INFO structure.
 typedef struct _SYSTEM_INFO { // sinf 
     union { 
-        DWORD  dwOemId; 
+        DWORD  dwOemId;  //// Obsolete field...do not use
         struct { 
-            WORD wProcessorArchitecture; 
+            WORD wProcessorArchitecture; //use this; 0 means PROCESSOR_ARCHITECTURE_INTEL
             WORD wReserved; 
         }; 
     }; 
@@ -55,8 +55,8 @@ typedef struct _SYSTEM_INFO { // sinf
 	_tprintf (_T("OEM Id:             %d\n"), SysInfo.dwOemId); //retained for compatibility
 	_tprintf (_T("Processor Arch:     %d\n"), SysInfo.wProcessorArchitecture); // 0 for x86; 9 for x64 (AMD or Intel)
 	_tprintf (_T("Page Size:          %x\n"), SysInfo.dwPageSize);
-	_tprintf (_T("Min appl addr:      %p\n"), SysInfo.lpMinimumApplicationAddress);//lowest VA for apps and dlls
-	_tprintf (_T("Max appl addr:      %p\n"), SysInfo.lpMaximumApplicationAddress);//highest VA for apps and dlls
+	_tprintf (_T("Min appl addr:      %p\n"), SysInfo.lpMinimumApplicationAddress);//lowest VA for apps and dlls; depends on build win32 or x64
+	_tprintf (_T("Max appl addr:      %p\n"), SysInfo.lpMaximumApplicationAddress);//highest VA for apps and dlls;depends on build win32 or x64
 	/*A mask representing the set of processors configured into the system. Bit 0 is processor 0;bit 31 is processor 31.*/
 	_tprintf (_T("ActiveProcMask:     %x\n"), SysInfo.dwActiveProcessorMask);//also include thread per core
 	_tprintf (_T("Number processors:  %d\n"), SysInfo.dwNumberOfProcessors);//number of logical processors.
@@ -75,6 +75,7 @@ typedef struct _SYSTEM_INFO { // sinf
 	A process affinity mask is a subset of the system affinity mask. A process is only allowed to run on the processors configured into a system.
 	Therefore, the process affinity mask cannot specify a 1 bit for a processor when the system affinity mask specifies a 0 bit for that processor.
 	*/
+	//also check out SetProcessAffinityMask
 	GetProcessAffinityMask (GetCurrentProcess(), (PDWORD_PTR)&ProcAffinMask, (PDWORD_PTR)&SysAffinMask);
 	_tprintf (_T("Sys  Affinity Mask  %x\n"), SysAffinMask);
 	_tprintf (_T("Proc Affinity Mask  %x\n"), ProcAffinMask);
