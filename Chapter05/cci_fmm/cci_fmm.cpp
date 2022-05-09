@@ -5,7 +5,7 @@
 /* of the cci_f function. */
 
 /* cci shift file1 file2
- *		shift is the integer added mod 256 to each byte.
+ *		shift is the shifting amount.
  *	Otherwise, this program is like cp and cpCF but there is no direct UNIX equivalent. */
 
 /* This program illustrates:
@@ -68,13 +68,15 @@ BOOL cci_f (LPCTSTR fIn, LPCTSTR fOut, DWORD shift)
 			ReportException (_T ("This file is too large to map on a Win32 system."), 4);
 
 		/* Only one of the followings can be passed as 3rd argument CreateFileMapping. 
-		   Specifies the page protection of the file mapping object. All mapped views of the objectmust be compatible with this protection.
+		   Specifies the page protection of the file mapping object. All mapped views of the object must be compatible with this protection.
 
-		  PAGE_READONLY: Allows views to be mapped for read-only or copy-on-write access. An attempt to write to a specific region results
-		  in an access violation. The file handle that the hFile parameter specifies must becreated with the GENERIC_READ access right.
+		  PAGE_READONLY: Allows views to be mapped for read-only access. An attempt to write to a specific region results
+		  in an access violation. The file handle that the hFile parameter specifies must be created with the GENERIC_READ access right.
 		  PAGE_READWRITE: Allows views to be mapped for read-only, copy-on-write,or read/write access. The file handle that the hFile 
 		  parameter specifies must becreated with the GENERIC_READ and GENERIC_WRITE access rights.
-		  PAGE_WRITECOPY: Equivalent to PAGE_READONLY
+		  PAGE_WRITECOPY: you can read/write to the file's data. Writing causes a private
+		                  copy of the page to be created. You must have passed 
+						  either GENERIC_READ or GENERIC_READ | GENERIC_WRITE to CreateFile.
 
 		  Attributes for 3rd arg of CreateFileMapping
 		  SEC_COMMIT, EC_IMAGE, SEC_IMAGE_NO_EXECUTE, SEC_RESERVE
@@ -89,8 +91,8 @@ BOOL cci_f (LPCTSTR fIn, LPCTSTR fOut, DWORD shift)
 		/* 2nd arg (The type of access to a file mapping object) of MapViewOfFile
 		   FILE_MAP_ALL_ACCESS: A read/write view of the file is mapped. The file mappingobject must have been created with PAGE_READWRITE 
 		                        or PAGE_EXECUTE_READWRITE protection.
-		   FILE_MAP_WRITE: Equivalent to FILE_MAP_ALL_ACCESS
-		   FILE_MAP_READ: A read-only view of the file is mapped. An attempt towrite to the file view results in an access violation.
+		   FILE_MAP_WRITE: Equivalent to FILE_MAP_ALL_ACCESS or ( FILE_MAP_WRITE |FILE_MAP_READ
+)		   FILE_MAP_READ: A read-only view of the file is mapped. An attempt towrite to the file view results in an access violation.
                           The file mapping object must have been created with PAGE_READONLY or PAGE_READWRITE 
 		
 		*/
@@ -99,13 +101,14 @@ BOOL cci_f (LPCTSTR fIn, LPCTSTR fOut, DWORD shift)
 		/* Comment: This may fail for large files, especially on 32-bit systems
 		 * where you have, at most, 3 GB to work with (of course, you have much less
 		 * in reality, and you need to map two files. 
-		 * This program works by mapping the input and output files in their entirity.
+		 * This program works by mapping the input and output files in their entirety.
 		 * You could enhance this program by mapping one block at a time for each file,
 		 * much as blocks are used in the ReadFile/WriteFile implementations. This would
 		 * allow you to deal with very large files on 32-bit systems. I have not taken
 		 * this step and leave it as an exercise. 
 		 */
 		//3rd and 4th args specify file offset where view begins. Must be multiple of allocation granularity (64kB)
+		//this offset must lie in file mapping object.
 		
 		/* 5th arg:
 		The number of bytes of a file mapping to map to the view. All bytes must be within the maximum size specified by 
@@ -113,7 +116,7 @@ BOOL cci_f (LPCTSTR fIn, LPCTSTR fOut, DWORD shift)
 		
 		*/
 
-		pInFile = (LPTSTR)MapViewOfFile (hInMap, FILE_MAP_READ, 0, 0, 0);// here view can access all bytes of file mapping object.
+		pInFile = (LPTSTR)MapViewOfFile (hInMap, FILE_MAP_READ, 0, 0, 0);// here view can access all bytes of file mapping object starting from offset 0
 		if (pInFile == NULL)
 			ReportException (_T ("Failure Mapping input file."), 3);
 
@@ -155,7 +158,7 @@ BOOL cci_f (LPCTSTR fIn, LPCTSTR fOut, DWORD shift)
 			//SIZE_T s = 0;
 			//_tprintf(_T("%lu "),fileSize.QuadPart);
 			while (pIn < pInFile + fileSize.QuadPart/TSIZE) { 
-				*pOut = (*pIn + cShift) % 256;
+				*pOut = (TSIZE == 1) ? (*pIn + cShift) % 256 : (*pIn + cShift) % 65536;
 				//_tprintf(_T("%lu, %p "),s++,pIn);
 				pIn++; pOut++;
 				

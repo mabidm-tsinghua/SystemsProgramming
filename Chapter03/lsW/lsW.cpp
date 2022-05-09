@@ -104,6 +104,8 @@ static BOOL TraverseDirectory(LPTSTR parentPath, LPTSTR searchPattern, DWORD num
 	BOOL recursive = flags[0];
 	DWORD fType, iPass, lenParentPath;
 	TCHAR subdirectoryPath[MAX_PATH_LONG + 1];
+	
+	
 
 	/* Open up the directory search handle and get the
 		first file name to satisfy the path name.
@@ -152,6 +154,7 @@ static BOOL TraverseDirectory(LPTSTR parentPath, LPTSTR searchPattern, DWORD num
 				}
 				_tcscpy(subdirectoryPath, parentPath);
 				_tcscat (subdirectoryPath, findData.cFileName); /* The parent path terminates with \ before the _tcscat call */
+				depth++;
 				TraverseDirectory(subdirectoryPath, _T("*"), numFlags, flags);//include all files/directories in a sub-dir
 				SetCurrentDirectory(_T("..")); /* Restore the current directory */
 			}//directory

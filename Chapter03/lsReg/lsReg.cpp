@@ -103,7 +103,8 @@ int _tmain(int argc, LPTSTR argv[])
 	//hKey is the parent key handle
 	//open the specified pScan key; pScan is not case-sensitive
 	//KEY_READ is the desired access rights to the key to be opened.
-	if (RegOpenKeyEx(hKey, pScan, 0, KEY_READ, &hNextKey) != ERROR_SUCCESS) 
+	//if (RegOpenKeyEx(hKey, pScan, 0, KEY_READ, &hNextKey) != ERROR_SUCCESS) 
+	if (RegOpenKeyEx(hKey, _T("SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment"), 0, KEY_READ, &hNextKey) != ERROR_SUCCESS)
 		ReportError(_T("Cannot open subkey properly"), 2, TRUE);
 
 	hKey = hNextKey;//pointer to predefined (i.e.hKey) or subkey (specified by pScan) depending on whether pScan is NULL or empty string

@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31624.102
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sortBT", "Chapter05\Chapter05.vcxproj", "{E8823FA1-131D-4E4C-B1A7-328C1B31D804}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cci_fmm", "cci_fmm\cci_fmm.vcxproj", "{EC185ACC-C081-45D9-82C7-911804FAD591}"
@@ -22,6 +24,10 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cci_fDll_clang", "cci_fDll_clang\cci_fDll_clang.vcxproj", "{2622F8B9-152E-4CA2-AD27-4B2B1BC8C4F0}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cci_f_IL", "cci_f_IL\cci_f_IL.vcxproj", "{3A2B49DC-814E-4E0A-9182-14E6401EC58B}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "process_to_proess_sharing_memory_mapped", "process_to_proess_sharing_memory_mapped\process_to_proess_sharing_memory_mapped.vcxproj", "{A43F30DE-1C41-4C1E-B9DC-AEFE5F544ED3}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "file_reverse_memory_mapped", "file_reverse_memory_mapped\file_reverse_memory_mapped.vcxproj", "{9C12D392-7F4E-40EA-A874-65D37135EEC4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -111,8 +117,27 @@ Global
 		{3A2B49DC-814E-4E0A-9182-14E6401EC58B}.Release|Win32.ActiveCfg = Release|Win32
 		{3A2B49DC-814E-4E0A-9182-14E6401EC58B}.Release|Win32.Build.0 = Release|Win32
 		{3A2B49DC-814E-4E0A-9182-14E6401EC58B}.Release|x64.ActiveCfg = Release|Win32
+		{A43F30DE-1C41-4C1E-B9DC-AEFE5F544ED3}.Debug|Win32.ActiveCfg = Debug|Win32
+		{A43F30DE-1C41-4C1E-B9DC-AEFE5F544ED3}.Debug|Win32.Build.0 = Debug|Win32
+		{A43F30DE-1C41-4C1E-B9DC-AEFE5F544ED3}.Debug|x64.ActiveCfg = Debug|x64
+		{A43F30DE-1C41-4C1E-B9DC-AEFE5F544ED3}.Debug|x64.Build.0 = Debug|x64
+		{A43F30DE-1C41-4C1E-B9DC-AEFE5F544ED3}.Release|Win32.ActiveCfg = Release|Win32
+		{A43F30DE-1C41-4C1E-B9DC-AEFE5F544ED3}.Release|Win32.Build.0 = Release|Win32
+		{A43F30DE-1C41-4C1E-B9DC-AEFE5F544ED3}.Release|x64.ActiveCfg = Release|x64
+		{A43F30DE-1C41-4C1E-B9DC-AEFE5F544ED3}.Release|x64.Build.0 = Release|x64
+		{9C12D392-7F4E-40EA-A874-65D37135EEC4}.Debug|Win32.ActiveCfg = Debug|Win32
+		{9C12D392-7F4E-40EA-A874-65D37135EEC4}.Debug|Win32.Build.0 = Debug|Win32
+		{9C12D392-7F4E-40EA-A874-65D37135EEC4}.Debug|x64.ActiveCfg = Debug|x64
+		{9C12D392-7F4E-40EA-A874-65D37135EEC4}.Debug|x64.Build.0 = Debug|x64
+		{9C12D392-7F4E-40EA-A874-65D37135EEC4}.Release|Win32.ActiveCfg = Release|Win32
+		{9C12D392-7F4E-40EA-A874-65D37135EEC4}.Release|Win32.Build.0 = Release|Win32
+		{9C12D392-7F4E-40EA-A874-65D37135EEC4}.Release|x64.ActiveCfg = Release|x64
+		{9C12D392-7F4E-40EA-A874-65D37135EEC4}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {EDA30800-2D8E-4597-A850-C647BB69FE7F}
 	EndGlobalSection
 EndGlobal

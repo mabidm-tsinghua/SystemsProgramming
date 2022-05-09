@@ -7,7 +7,8 @@
 
 #include "stdafx.h"
 
-extern  "C" __declspec (dllimport) BOOL cci_f (LPCTSTR, LPCTSTR, DWORD);
+	//always good to use extern "C"
+extern "C" __declspec (dllimport) BOOL cci_f(LPCTSTR, LPCTSTR, DWORD);
 
 int _tmain (int argc, LPTSTR argv[])
 {

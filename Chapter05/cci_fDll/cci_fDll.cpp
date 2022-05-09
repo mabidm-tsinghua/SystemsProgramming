@@ -11,7 +11,8 @@
 /* In general, you should have a single function and use a preprocessor */
 /* variable to determine if the function is exported or not */
 
-__declspec (dllexport)
+//always good to use extern "C"
+extern "C" __declspec (dllexport)
 BOOL __cdecl cci_f (LPCTSTR fIn, LPCTSTR fOut, DWORD shift)
 /* Caesar cipher function  - Simple implementation
 *		fIn:		Source file pathname
