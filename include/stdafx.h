@@ -15,7 +15,9 @@
 #include <string.h>
 #include <process.h> 
 #include <wchar.h>
-
+#include <malloc.h>        // For alloca
+#include <TlHelp32.h>
+#include <StrSafe.h>
 #include "support.h"
 
 

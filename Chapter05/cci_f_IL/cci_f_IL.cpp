@@ -15,7 +15,7 @@ int _tmain (int argc, LPTSTR argv[])
 	
 	
 	if (argc < 4)
-		ReportError (_T("Usage: cciEL shift file1 file2 DllName"), 1, FALSE);
+		ReportError (_T("Usage: cci_f_IL shift file1 file2"), 1, FALSE);
 
 	/*  Call the function. */
  

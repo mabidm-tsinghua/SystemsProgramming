@@ -128,10 +128,13 @@ BOOL FileReverse(LPCTSTR inFile, PBOOL pbIsTextUnicode) {
     // Clean up everything before exiting.
     UnmapViewOfFile(pvFile);
     CloseHandle(hFileMap);
-
+    /*If CreateFileMapping is called to create a file mapping object for hFile,
+    UnmapViewOfFile must be called first to unmap all views and call CloseHandle
+    to close the file mapping object before you can call SetEndOfFile.*/
+    
     // Remove trailing zero character added earlier.
-    SetFilePointer(hFile, dwFileSize, NULL, FILE_BEGIN);
-    SetEndOfFile(hFile);
+    SetFilePointer(hFile, dwFileSize, NULL, FILE_BEGIN);//Moves the file pointer of the specified file.
+    SetEndOfFile(hFile);//Sets the physical file size for the specified file to the current position of the file pointer.
     CloseHandle(hFile);
 
     return(TRUE);
