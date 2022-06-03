@@ -27,7 +27,7 @@ int _tmain (int argc, LPTSTR argv[])
 		ReportError (_T("Failed loading DLL."), 4, TRUE);
 
 	//  Get the entry point address. 
-	pcci = GetProcAddress (hDLL, "?cci_f@@YAHPB_W0K@Z");
+	pcci = GetProcAddress (hDLL, "cci_f");
 	if (pcci == NULL)
 		ReportError (_T ("Failed of find entry point."), 5, TRUE);
 	cci_f = (BOOL (__cdecl *)(LPCTSTR, LPCTSTR, DWORD)) pcci;

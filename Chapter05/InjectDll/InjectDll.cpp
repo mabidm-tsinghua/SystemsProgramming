@@ -33,7 +33,8 @@ BOOL WINAPI InjectLibW(DWORD dwProcessId, PCWSTR pszLibFile) {
     __try {
         // Get a handle for the target process.
         hProcess = OpenProcess(
-            PROCESS_QUERY_INFORMATION |   // Required by Alpha
+            //The access to the process object
+            PROCESS_QUERY_INFORMATION |   // Required to retrieve certain information about a process, such as its token, exit code, and priority class
             PROCESS_CREATE_THREAD |   // For CreateRemoteThread
             PROCESS_VM_OPERATION |   // For VirtualAllocEx/VirtualFreeEx
             PROCESS_VM_WRITE,             // For WriteProcessMemory
@@ -242,7 +243,7 @@ void inject(DWORD pid) {
         _countof produces erroneous results if array is a pointer. 
         In C++, _countof fails to compile if array is a pointer.*/
         //retrieves the path of the executable file of the current process
-        GetModuleFileName(NULL, szLibFile, _countof(szLibFile));
+        GetModuleFileName(NULL, szLibFile, _countof(szLibFile)); //retrieves the path of the executable file of the current process
         //Scans a string for the last occurrence of a character.
         PTSTR pFilename = _tcsrchr(szLibFile, TEXT('\\')) + 1;
         //complete filename of dll

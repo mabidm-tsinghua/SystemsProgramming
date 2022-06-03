@@ -61,7 +61,7 @@ int _tmain(int argc, LPCTSTR argv[])
 		ReportError(_T("GetCurrentDirectory failed"), 1, TRUE);
 	}
 	//argc == fileIndex
-	if (argc < fileIndex + 1) //if search pattern not specified; just this command: lsw -R -l or lsw -l
+	if (argc == fileIndex) //if search pattern not specified; just this command: lsw -R -l or lsw -l
 		ok = TraverseDirectory(currPath, _T("*"), MAX_OPTIONS, flags);
 	else for (i = fileIndex; i < argc; i++) { //for each search pattern
 		if (_tcslen(argv[i]) >= MAX_PATH) {
@@ -128,7 +128,8 @@ static BOOL TraverseDirectory(LPTSTR parentPath, LPTSTR searchPattern, DWORD num
 		The first pass lists the files and subdirectories and the second pass list the sub directories. */
 
 	for (iPass = 1; iPass <= 2; iPass++) {
-		searchHandle = FindFirstFile(searchPattern, &findData);//search is w.r.t. Process Current directory
+		//searchHandle = FindFirstFile(searchPattern, &findData);//search is w.r.t. Process Current directory
+		searchHandle = FindFirstFile(_T("D:\\github_rep\\SystemsProgramming\\Chapter03"), &findData);//search is w.r.t. Process Current directory
 		if (searchHandle == INVALID_HANDLE_VALUE) { //fails or fails to locate files
 			ReportError(_T("Error opening Search Handle.\n"), 0, TRUE);
 			return FALSE;
@@ -154,7 +155,7 @@ static BOOL TraverseDirectory(LPTSTR parentPath, LPTSTR searchPattern, DWORD num
 				}
 				_tcscpy(subdirectoryPath, parentPath);
 				_tcscat (subdirectoryPath, findData.cFileName); /* The parent path terminates with \ before the _tcscat call */
-				depth++;
+				
 				TraverseDirectory(subdirectoryPath, _T("*"), numFlags, flags);//include all files/directories in a sub-dir
 				SetCurrentDirectory(_T("..")); /* Restore the current directory */
 			}//directory

@@ -25,6 +25,7 @@ typedef struct _OSVERSIONINFO{
 	/* See the OSVERSIONINFO description in MSDN for Windows 9x */
 
 	OurVersion.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+#pragma warning(suppress : 4996)
 	if (!GetVersionEx (&OurVersion)) 
 		ReportError (_T("Cannot get OS Version info."), 1, TRUE);
 

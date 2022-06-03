@@ -7,6 +7,7 @@ inline void display(PCSTR szMsg) {
     char szTitle[MAX_PATH];
     GetModuleFileNameA(NULL, szTitle, _countof(szTitle));
     printf("Title: %s, Message: %s \n", szTitle,szMsg);
+   // _tprintf(_T("DLL ..."));
 }
 
 BOOL APIENTRY DllMain( HMODULE hModule,
